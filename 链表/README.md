@@ -12,18 +12,18 @@
 ## 2、实现链表
 ### 2.1 定义链表类
 ```
-// 定义链表类
-function LinkList() {
-    // 定义节点
-    var Node = function (data) {
-        this.data = data;
-        this.next = null;
-    }
+function LinkList(){
 
-    this.length = 0;        // 长度
-    this.head = null;       // 头节点
-    this.tail = null;       // 尾节点
-};
+  var length = 0;        // 长度
+  var head = null;       // 头节点
+  var tail = null;       // 尾节点
+
+  // 定义节点
+  var Node = function(data){
+      this.data = data;
+      this.next = null;
+  }
+}
 ```
 ### 2.2 链表方法扩展
 * append，添加一个新的元素
@@ -33,52 +33,53 @@ function LinkList() {
 * remove_tail，删除尾节点
 * indexOf，返回指定元素的索引
 * get，返回指定索引位置的元素
-* getHead，返回首节点
-* getTail，返回尾节点
-* getLength，返回链表长度
+* head，返回首节点
+* tail，返回尾节点
+* length，返回链表长度
 * isEmpty，判断链表是否为空
 * clear，清空链表
 * print，打印整个链表
   
 ```
 function LinkList(){
+
+  var length = 0;        // 长度
+  var head = null;       // 头节点
+  var tail = null;       // 尾节点
+
   // 定义节点
   var Node = function(data){
       this.data = data;
       this.next = null;
   }
 
-  this.length = 0;        // 长度
-  this.head = null;       // 头节点
-  this.tail = null;       // 尾节点
-
   // 添加一个新元素
   this.append = function(data){
       // 创建新节点
       var node = new Node(data);
       // 如果是空链表
-      if(this.head==null){
-          this.head = node;
-          this.tail = this.head;
+      if(head==null){
+          head = node;
+          tail = head;
       }else{
-          this.tail.next = node;       // 尾节点指向新创建的节点
-          this.tail = node;            // tail指向链表的最后一个节点
+          tail.next = node;       // 尾节点指向新创建的节点
+          tail = node;            // tail指向链表的最后一个节点
       }
-      this.length += 1;                // 长度加1
+      length += 1;                // 长度加1
       return true;
   };
 
   // 返回链表大小
-  this.getLength = function(){
-      return this.length;
+  this.length = function(){
+      return length;
   };
 
   // 获得指定位置的节点
   var get_node = function(index){
-      if(index < 0 || index >= this.length){
+      if(index < 0 || index >= length){
           return null;
       }
-      var curr_node = this.head;
+      var curr_node = head;
       var node_index = index;
       while(node_index-- > 0){
           curr_node = curr_node.next;
@@ -86,29 +87,9 @@ function LinkList(){
       return curr_node;
   };
 
-  // 返回指定位置节点
-  this.get = function(index){
-    var node = get_node(index);
-    if(node){
-        return node;
-    }
-    return null;
-  };
-
-  // 返回链表头节点
-  this.getHead = function(){
-      return get_node.call(this, 0);
-  }
-
-  // 返回链表尾节点
-  this.getTail = function(){
-      return get_node.call(this, length-1);
-  }
-
   // 在指定位置插入新的元素
   this.insert = function(index, data){
       // index == length,说明是在尾节点的后面新增,直接调用append方法即可
-      var length = this.length;
       if(index == length){
           return this.append(data);
       }else if(index > length || index < 0){
@@ -118,22 +99,21 @@ function LinkList(){
           var new_node = new Node(data);
           if(index == 0){
               // 如果在头节点前面插入,新的节点就变成了头节点
-              new_node.next= this.head;
-              this.head = new_node;
+              new_node.next= head;
+              head = new_node;
           }else{
               // 要插入的位置是index,找到索引为index-1的节点,然后进行连接
-              var pre_node = get_node.call(this, index-1);
+              var pre_node = get_node(index-1);
               new_node.next = pre_node.next;
               pre_node.next = new_node;
           }
-          this.length += 1;
+          length += 1;
           return true;
       }
   };
 
   // 删除指定位置的节点
   this.remove = function(index){
-    var length = this.length;
       // 参数不合法
       if(index < 0 || index >= length){
           return null;
@@ -142,15 +122,15 @@ function LinkList(){
           // 删除的是头节点
           if(index == 0){
               // head指向下一个节点
-              del_node = this.head;
-              this.head = this.head.next;
+              del_node = head;
+              head = head.next;
               // 如果head == null,说明之前链表只有一个节点
               if(!head){
-                  this.tail = null;
+                  tail = null;
               }
           }else{
               // 找到索引为index-1的节点
-              var pre_node = get_node.call(this, index-1);
+              var pre_node = get_node(index-1);
               del_node = pre_node.next;
               pre_node.next = pre_node.next.next;
               // 如果删除的是尾节点
@@ -175,10 +155,32 @@ function LinkList(){
       return this.remove(0);
   };
 
-  // 返回指定元素的索引,如果没有,返回-1;有多个相同元素,返回第一个
+  // 返回指定位置节点
+  this.get = function(index){
+      var node = get_node(index);
+      if(node){
+          return node;
+      }
+      return null;
+  };
+
+
+
+  // 返回链表头节点
+  this.head = function(){
+      return this.get(0);
+  }
+
+  // 返回链表尾节点
+  this.tail = function(){
+      return this.get(length-1);
+  }
+
+  // 返回指定元素的索引,如果没有,返回-1
+  // 有多个相同元素,返回第一个
   this.indexOf = function(data){
       var index = -1;
-      var curr_node = this.head;
+      var curr_node = head;
       while(curr_node){
           index += 1
           if(curr_node.data == data){
@@ -192,7 +194,7 @@ function LinkList(){
 
   // 输出链表
   this.print = function(){
-      var curr_node = this.head;
+      var curr_node = head;
       var str_link = ""
       while(curr_node){
 
@@ -201,21 +203,21 @@ function LinkList(){
       }
       str_link += "null";
       console.log(str_link);
-      console.log("长度为"+ this.length.toString());
+      console.log("长度为"+ length.toString());
   };
 
   // isEmpty
   this.isEmpty = function(){
-      return this.length == 0;
+      return length == 0;
   };
 
   // 清空链表
   this.clear = function(){
-      this.head = null;
-      this.tail = null;
-      this.length = 0;
+      head = null;
+      tail = null;
+      length = 0;
   };
-};
+}
 ```
 ## 3、链表相关算法
 ### 3.1 链表反转
@@ -232,6 +234,9 @@ curNode.next = perNode;
 ```
 // 对LinkList添加reverse_iter实例方法
 function LinkList(){
+  var length = 0;        // 长度
+  var head = null;       // 头节点
+  var tail = null;       // 尾节点
   ...
 
   this.reverse_iter = function() {
@@ -285,27 +290,29 @@ list.print(); // 输出： 3 ->2 ->1 ->null
 ```
 // 对LinkList添加reverse_iter实例方法
 function LinkList(){
-    ...
+  var length = 0;        // 长度
+  var head = null;       // 头节点
+  var tail = null;       // 尾节点
+  ...
 
-    this.reverse_recursion = function(node){
-        if(node.next == null) {
-            // 当前的尾节点  最终尾节点变成首节点
-            head = node;
-            return node;
-        }
-        // 获取反转之后的尾结点
-        debugger;
-        let last = this.reverse_recursion(node.next);
-        // 将当前节点变成未尾结点 并且尾结点的next是null
-        last.next = node;
-        node.next = null;
-
-        // 手动维护实例尾结点
-        tail = node;
-        
-        // 返回尾结点
-        return node;
+  this.reverse_recursion = function(node){
+    if(node.next == null) {
+      // 当前的尾节点  最终尾节点变成首节点
+      head = node;
+      return node;
     }
+    // 获取反转之后的尾结点
+    let last = this.reverse_recursion(node.next);
+    // 将当前节点变成未尾结点 并且尾结点的next是null
+    last.next = node;
+    node.next = null;
+
+    // 手动维护实例尾结点
+    tail = node;
+    
+    // 返回尾结点
+    return node;
+  }
 }
 
 // 测试
@@ -316,6 +323,9 @@ list.append(3);
 list.reverse_recursion(list.head());
 list.print();   // 输出： 3 ->2 ->1 ->null
 ```
+
+通过调试把上面的代码走一遍，代码执行流程：
+![image](./assert/recursion.png)
 
 
 
